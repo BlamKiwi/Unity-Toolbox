@@ -1,0 +1,6 @@
+Unity Toolbox is a collection of classes to supplement Unity's built in engine framework. Although Unity is a great little game engine it still lacks functionality common to many game engines, such as a non trivial Event Management or tools to help Localization. As I create these classes for my own games, I will refactor them for the general public and share them here.
+
+Unless otherwise specified, code released in UnityToolbox will be licensed under the two clause BSD license. The license will be stated at the top of every code file, and a LICENSE file will summarize what licenses there are in each module.
+
+Documentation can be found online at:
+https://github.com/MorphingDragon/UnityToolbox/wiki
