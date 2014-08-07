@@ -25,6 +25,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading;
 using MBS;
 using UnityEngine;
@@ -75,6 +77,11 @@ public sealed class EventManager : MonoBehaviour
     ///     An event queue that is safe for threads to access.
     /// </summary>
     private IQueue ConcurrentEventQueue;
+
+    /// <summary>
+    ///     An event queue that is safe for threads to queue actions on the main thread. 
+    /// </summary>
+    private Queue<Action> ConccurentActionQueue;
 
     /// <summary>
     ///     The main event queue.
@@ -247,6 +254,16 @@ public sealed class EventManager : MonoBehaviour
         // Remove the listener
         return manager != null && manager.RemoveListener(eventName, action);
     }
+
+    /// <summary>
+    /// Queues the action to be done on the main thread. 
+    /// </summary>
+    /// <param name="action">The action to be queued.</param>
+    public void QueueOnMainThread(Action action)
+    {
+        lock (ConccurentActionQueue)
+            ConccurentActionQueue.Enqueue(action);
+    }
 #endregion
 
     #region Unity Methods
@@ -269,6 +286,9 @@ public sealed class EventManager : MonoBehaviour
     {
         // Get main thread ID
         MainThreadID = Thread.CurrentThread.ManagedThreadId;
+
+        // Setup concurrent event queue
+        ConccurentActionQueue = new Queue<Action>();
 
         // Assert rational values for time
         if (MaxTimeWindow <= 0.0f)
@@ -347,10 +367,27 @@ public sealed class EventManager : MonoBehaviour
             // Check if we still have time
             if (Time.time >= maxS)
             {
-                print("Event manager ran out of time: " + name);
-                return;
+                //print("Event manager ran out of time: " + name);
+                break;
             }
         }
+
+        // Process the concurrent action queue
+        lock (ConccurentActionQueue)
+            while (ConccurentActionQueue.Any())
+            {
+                //print("Firing event");
+
+                // Do action
+                ConccurentActionQueue.Dequeue()();
+
+                // Check if we still have time
+                if (Time.time >= maxS)
+                {
+                    //print("Event manager ran out of time: " + name);
+                    break;
+                }
+            }
 
         // Merge buffered events back into the main queue
         while(!EventQueue.IsEmpty())
@@ -386,9 +423,10 @@ public sealed class EventManager : MonoBehaviour
             // Get event listeners
             ICollection<Action<MonoBehaviour, EventArgs>> eventLs = Listeners[e.Event];
 
-            // Call each listener
             foreach (var a in eventLs)
+            {
                 a(e.Sender, e.Args);
+            }
         }
         // Throw exception if we required listeners
         else if (e.RequiresListeners)

@@ -115,7 +115,7 @@ namespace MBS
         {
             ThrowIfNull(item);
 
-            EventTuple[] newQ = new EventTuple[i_Items.Length * 2];
+            EventTuple[] newQ = new EventTuple[i_Items.Length];
             var res = false; // Assume we do not remove any items
 
             // Copy items to new array that do not match given item
@@ -150,7 +150,7 @@ namespace MBS
         {
             ThrowIfNull(item);
 
-            EventTuple[] newQ = new EventTuple[i_Items.Length * 2];
+            EventTuple[] newQ = new EventTuple[i_Items.Length];
             var res = false; // Assume we do not remove any items
 
             // Copy items to new array that do not match given item
