@@ -62,24 +62,28 @@ namespace MBS
         /// <returns>The Enumerator.</returns>
         public override IEnumerator<IEnumerable<T>> GetEnumerator()
         {
-            // If empty input/output list
+            // If empty input/output list size output empty list
             if (i_DataList.Count == 0 || OutputSize == 0)
                 yield return new T[OutputSize];
-            // Handle normal case
+            // Else start outputting permutations
             else
             {
-                // Setup index keys
+                // Setup index array
                 var indexes = new int[OutputSize];
 
                 // Iterate through each possible permutation
                 do
                 {
-                    // Create a new list item
-                    var listItem = new T[OutputSize];
-                    for (int i = 0; i < OutputSize; i++)
+					// Create a new list item to return
+					var listItem = new T[OutputSize];
+					
+					// Map indexes to actual data values
+					for (int i = 0; i < OutputSize; i++)
                         listItem[i] = i_DataList[indexes[i]];
+						
+					// Return the new combination
                     yield return listItem;
-
+				
                     // Update indexes
                     IncrementIndexes(indexes);
                 } while (!indexes.All(x => x == 0));
@@ -116,13 +120,15 @@ namespace MBS
         /// <param name="indexes">The indexes.</param>
         private void IncrementIndexes(int[] indexes)
         {
+			// Increment the indexes with carry
             for (int i = 0; i < indexes.Length; i++)
             {
-                // Increment the current index
+                // Increment the current index with wraparound
                 indexes[i] = (indexes[i] + 1)%i_DataList.Count;
 
-                // Check if we need to carry over
+                // Check if we need to carry over any values
                 if (indexes[i] != 0)
+					// No more values to carry
                     return;
             }
         }

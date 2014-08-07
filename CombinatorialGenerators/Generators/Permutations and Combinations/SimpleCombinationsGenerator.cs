@@ -68,51 +68,70 @@ namespace MBS
         public override IEnumerator<IEnumerable<T>> GetEnumerator()
         {
             // Check for edge cases
-            // If output size is same as input size
+            // If output size is same as input size return size N list
             if (OutputSize == i_DataList.Count)
                 yield return i_DataList;
-                // Else if empty output list
+                // Else if empty output list size output empty list
             else if (OutputSize == 0)
                 yield return new T[] {};
-                // Else start outputting items
+                // Else start outputting combinations
             else
             {
                 // Setup skip array
+				// The size of our skip array is the delta 
+				// between the data list and the desired output size
                 int delta = i_DataList.Count - OutputSize;
                 var skip = new int[delta];
+				
+				// Setup the skip array with some initial values
+				// The initial values will be set to the the delta region 
+				// between the output size and the data list.
+				// This can be arbitrary
                 for (int i = OutputSize, j = 0; i < i_DataList.Count; i++, j++)
                     skip[j] = i;
 
-                // Start generating list items
-                int nextSkip = 0;
+                // Start generating combinations
                 do
                 {
-                    // Generate list item
+                    // Create list items to return
                     var listItem = new T[OutputSize];
+					
+					// Start mapping indexes to actual data values
+					// i - Data List Index
+					// s - Skip Array Index
+					// hole - The index of the hole we will place items into
                     for (int i = 0, s = 0, hole = 0; i < i_DataList.Count && hole < OutputSize; i++)
                     {
                         // If item is in skip array, skip it and go to next skip array item
                         if (s < skip.Length && skip[s] == i)
+							// Increment skip index to skip item
                             s++;
                             // Else place item into hole
                         else
                         {
+							// Place item
                             listItem[hole] = i_DataList[i];
+							
+							// Increment hole to unfilled array index
                             hole++;
                         }
                     }
+					
+					// Return the list item
                     yield return listItem;
 
                     // Update skip array
                     // Find the next skip index to update
+					int nextSkip = 0;
                     for (nextSkip = 0; nextSkip < delta && skip[nextSkip] == nextSkip; nextSkip++)
                         ;
 
-                    // Update and carry skip indexes over
+                    // If next skip array index is in skip array range
                     if(nextSkip != delta)
+						// Update and carry skip indexes over
                         for (int j = nextSkip, i = skip[j] - 1; j >= 0; i--, j--)
                             skip[j] = i;
-                } while (nextSkip != delta);
+                } while (nextSkip != delta); // While the skip array item index is still inside the skip array
             }
         }
 

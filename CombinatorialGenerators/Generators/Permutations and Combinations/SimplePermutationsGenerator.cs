@@ -70,18 +70,24 @@ namespace MBS
             // http://www.cs.princeton.edu/~rs/talks/perms.pdf
 
             // Create seed index array
+			// Fill with incrementing index values
+			// to generate our sub combinations of indexes
             var seed = new int[i_DataList.Count];
             for (int i = 0; i < i_DataList.Count; i++)
                 seed[i] = i;
 
             // Generate all permutations of simple sub-combinations
+			// These are our simple permutations of output length
             foreach (var seeditem in new SimpleCombinationsGenerator<int>(seed, OutputSize))
             {
                 // Setup arrays
+				// Get index array for simple combination
                 int[] indexes = seeditem.ToArray();
+				
+				// Create counters for heap's algo
                 var counters = new int[OutputSize];
 
-                // Output list item
+                // Output list item from current indexes for first item
                 yield return OutputListItem(indexes);
 
                 // Generate the rest of the items
@@ -95,12 +101,12 @@ namespace MBS
                         // Output list item
                         yield return OutputListItem(indexes);
 
-                        // Increment and reset counters
+                        // Increment counters and reset counter index
                         counters[i]++;
                         i = 1;
                     }
                     else
-                        // Reset counters
+                        // Reset counter and try generate again
                         counters[i++] = 0;
             }
         }

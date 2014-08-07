@@ -62,7 +62,7 @@ namespace MBS
         /// <returns>The Enumerator.</returns>
         public override IEnumerator<IEnumerable<T>> GetEnumerator()
         {
-            // If empty input/output list
+            // If empty input/output list size output empty list
             if (OutputSize == 0 || i_DataList.Count == 0)
                 yield return new T[] {};
             // Else start outputting items
@@ -74,33 +74,41 @@ namespace MBS
                 // Iterate through each possible combination
                 do
                 {
-                    // Create a new item and return it
-                    var listItem = new T[OutputSize];
-                    for (int i = 0; i < OutputSize; i++)
+                    // Create a new list item to return
+					var listItem = new T[OutputSize];
+					
+					// Map indexes to actual data values
+					for (int i = 0; i < OutputSize; i++)
                         listItem[i] = i_DataList[indexes[i]];
+						
+					// Return the new combination
                     yield return listItem;
 
-                    // Update indexes by incrementing right most and carrying addition
-                    int nextIndex = OutputSize - 1;
+                    // Update indexes by incrementing right most and pseudo-carrying addition
+                    int nextIndex = OutputSize - 1; // Right most index
                     for (int i = nextIndex; i >= 0; i--)
                     {
-                        // Update the index
+                        // Update the index with wrap around
                         indexes[i] = (indexes[i] + 1)%i_DataList.Count;
 
-                        // If there are no more carries to take care of 
+                        // If there are no more carries to take care of, we will find a non zero value 
                         if (indexes[i] != 0)
                         {
                             // Note the index we are at
                             nextIndex = i;
+							
+							// We will overwrite carry values
+							// so don't bother with propagating carry 
                             break;
                         }
                     } 
 
-                    // Ensure first ordering property
+                    // Ensure ordering property from the least significant index updated
+					// Copy the new index value into the more significant indexes
                     for (int i = nextIndex + 1; i < indexes.Length; i++)
-                        indexes[i] = indexes[nextIndex];
+                        indexes[i] = indexes[nextIndex]; 
 
-                } while (!indexes.All(x => x == 0));
+                } while (!indexes.All(x => x == 0)); // While we have not wrapped around
             }
         }
 

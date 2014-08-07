@@ -141,11 +141,18 @@ namespace MBS
         {
             // Calculate x!
             ulong res = 1; // 0! == 1
+
+            // Aggregate over interim factorial values
             for (; x > 0; x--)
             {
+                // Compute partial factorial into temp accumulator
                 ulong newRes = res * x;
+
+                // Check for overflow. Overflow is indicated by value wraparound, so the new accumulator will be smaller than the old one. 
                 if (newRes < res)
                     throw  new OverflowException("An overflow occurred while trying to calculate x!");
+
+                // Update the aggregate accumulate
                 res = newRes;
             }
 
