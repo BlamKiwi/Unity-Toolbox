@@ -77,7 +77,7 @@ namespace MBS
                 seed[i] = i;
 
             // Generate all permutations of simple sub-combinations
-			// These are our simple permutations of output length
+			// These are our simple permutation indexes of output size
             foreach (var seeditem in new SimpleCombinationsGenerator<int>(seed, OutputSize))
             {
                 // Setup arrays
@@ -101,7 +101,7 @@ namespace MBS
                         // Output list item
                         yield return OutputListItem(indexes);
 
-                        // Increment counters and reset counter index
+                        // Increment counter and reset counter index
                         counters[i]++;
                         i = 1;
                     }
