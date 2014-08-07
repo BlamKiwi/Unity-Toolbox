@@ -135,7 +135,7 @@ namespace MBS
         /// <summary>
         ///     Calculates x!
         /// </summary>
-        /// <param name="x">The number.</param>
+        /// <param name="x">The number to calculate the factorial of.</param>
         /// <returns>The result of x!</returns>
         protected static ulong Factorial(ulong x)
         {

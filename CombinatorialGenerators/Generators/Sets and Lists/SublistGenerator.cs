@@ -48,7 +48,8 @@ namespace MBS
 
         public override IEnumerator<IEnumerable<T>> GetEnumerator()
         {
-            // Return size n combination 
+            // The set of all sublists is the number for simple combinations of size N..0
+            // Return size N combination 
             yield return i_DataList;
 
             // Return size n-1 .. 1 combinations
@@ -69,9 +70,12 @@ namespace MBS
         /// <returns>The count.</returns>
         protected override ulong ComputeCount()
         {
-            // Calculate count
-            ulong res = 1UL << i_DataList.Count; //2^0 = 1
+            // Sublist count is equivalent to the number of subsets of indexes
+            // count = 2^n. Shift by N
+            ulong res = 1UL << i_DataList.Count; 
+
             // Check for overflow
+            // If the count is 0, that means the count bit was shifted out of range
             if (res == 0)
                 throw new OverflowException("An overflow occured while trying to compute the count.");
             return res;

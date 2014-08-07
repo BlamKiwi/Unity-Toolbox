@@ -35,6 +35,7 @@ namespace MBS
     {
         /// <summary>
         ///     Constructs a subset generator from the given items.
+        ///     Essentially sublists but with the set property enforced over the input items.
         /// </summary>
         /// <param name="items">The items to generate lists with.</param>
         public SubsetGenerator(IEnumerable<T> items) : base(new HashSet<T>(items)) { } 
