@@ -49,16 +49,9 @@ namespace MBS
         public override IEnumerator<IEnumerable<T>> GetEnumerator()
         {
             // The set of all sublists is the number for simple combinations of size N..0
-            // Return size N combination 
-            yield return i_DataList;
-
-            // Return size n-1 .. 1 combinations
-            for (int i = i_DataList.Count - 1; i > 0; i--)
+            for (int i = i_DataList.Count; i >= 0; i--)
                 foreach (var s in new SimpleCombinationsGenerator<T>(i_DataList, i))
                     yield return s;
-
-            // Return size 0 combination
-            yield return new T[] {};
         }
 
 

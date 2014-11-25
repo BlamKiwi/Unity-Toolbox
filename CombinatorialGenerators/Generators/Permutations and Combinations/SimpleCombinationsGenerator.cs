@@ -84,13 +84,13 @@ namespace MBS
                 var skip = new int[delta];
 				
 				// Setup the skip array with some initial values
-				// The initial values will be set to the the delta region 
-				// between the output size and the data list.
-				// This can be arbitrary
+				// The initial values will be set to the the delta range 
+				// between the output size and the data list size.
                 for (int i = OutputSize, j = 0; i < i_DataList.Count; i++, j++)
                     skip[j] = i;
 
                 // Start generating combinations
+                int nextSkip = 0;
                 do
                 {
                     // Create list items to return
@@ -122,7 +122,6 @@ namespace MBS
 
                     // Update skip array
                     // Find the next skip index to update
-					int nextSkip = 0;
                     for (nextSkip = 0; nextSkip < delta && skip[nextSkip] == nextSkip; nextSkip++)
                         ;
 
